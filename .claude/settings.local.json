@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//e/OneDrive/桌面/cfblog/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

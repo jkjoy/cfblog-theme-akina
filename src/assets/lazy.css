@@ -1,0 +1,23 @@
+/* 图片懒加载样式 */
+img.lazy-loading {
+  filter: blur(5px);
+  transition: filter 0.3s ease;
+}
+
+img.lazy-loaded {
+  filter: blur(0);
+  animation: fadeIn 0.5s ease-in;
+}
+
+img.lazy-error {
+  border: 2px dashed #f5c6cb;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
