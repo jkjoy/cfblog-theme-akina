@@ -86,6 +86,7 @@ import { useRoute, useRouter } from 'vue-router'
 import SkeletonLoader from '../components/SkeletonLoader.vue'
 import CommentSection from '../components/CommentSection.vue'
 import { useSEO, useStructuredData } from '../composables/useSEO'
+import { useSettingsStore } from '../stores/settings'
 import { getCategoryDetails, getTagDetails } from '../composables/useTaxonomy'
 import { useMarkdown } from '../composables/useMarkdown'
 import type { PostResponse, CategoryResponse, TagResponse } from '../types'
@@ -96,6 +97,7 @@ const router = useRouter()
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787'
 
 const { renderMarkdown } = useMarkdown()
+const settingsStore = useSettingsStore()
 
 // 获取当前文章的 slug
 const postSlug = computed(() => route.params.slug as string)
@@ -131,7 +133,7 @@ watch(post, (newPost) => {
 
     // 更新 meta 标签
     updateMeta({
-      title: `${newPost.title.rendered} - CFBlog`,
+      title: `${newPost.title.rendered} - ${settingsStore.settings.site_title}`,
       description,
       type: 'article',
       url: newPost.link,
@@ -149,7 +151,7 @@ watch(post, (newPost) => {
       dateModified: newPost.modified,
       author: `作者${newPost.author}`,
       publisher: {
-        name: 'CFBlog',
+        name: settingsStore.settings.site_title || 'CFBlog',
       },
     })
   }

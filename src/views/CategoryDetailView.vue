@@ -5,6 +5,7 @@ import PostCard from '../components/PostCard.vue'
 import SkeletonLoader from '../components/SkeletonLoader.vue'
 import Pagination from '../components/Pagination.vue'
 import { useSEO } from '../composables/useSEO'
+import { useSettingsStore } from '../stores/settings'
 import type { PostResponse, CategoryResponse } from '../types'
 
 const route = useRoute()
@@ -13,6 +14,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787'
 
 // 在组件顶层初始化 useSEO
 const { updateMeta } = useSEO()
+const settingsStore = useSettingsStore()
 
 const categoryId = computed(() => route.params.slug as string)
 const category = ref<CategoryResponse | null>(null)
@@ -38,7 +40,7 @@ const fetchCategory = async () => {
       // SEO 优化
       if (category.value) {
         updateMeta({
-          title: `${category.value.name} - 文章分类`,
+          title: `${category.value.name} - ${settingsStore.settings.site_title}`,
           description: category.value.description || `浏览 ${category.value.name} 分类下的所有文章`,
           keywords: `${category.value.name}, 分类, 博客`,
         })

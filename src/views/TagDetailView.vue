@@ -5,6 +5,7 @@ import PostCard from '../components/PostCard.vue'
 import SkeletonLoader from '../components/SkeletonLoader.vue'
 import Pagination from '../components/Pagination.vue'
 import { useSEO } from '../composables/useSEO'
+import { useSettingsStore } from '../stores/settings'
 import type { PostResponse, TagResponse } from '../types'
 
 const route = useRoute()
@@ -13,6 +14,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787'
 
 // 在组件顶层初始化 useSEO
 const { updateMeta } = useSEO()
+const settingsStore = useSettingsStore()
 
 const tagId = computed(() => route.params.slug as string)
 const tag = ref<TagResponse | null>(null)
@@ -38,7 +40,7 @@ const fetchTag = async () => {
       // SEO 优化
       if (tag.value) {
         updateMeta({
-          title: `${tag.value.name} - 文章标签`,
+          title: `${tag.value.name} - ${settingsStore.settings.site_title}`,
           description: tag.value.description || `浏览 ${tag.value.name} 标签下的所有文章`,
           keywords: `${tag.value.name}, 标签, 博客`,
         })

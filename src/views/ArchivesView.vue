@@ -52,6 +52,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useSEO } from '../composables/useSEO'
 import { useSettingsStore } from '../stores/settings'
+import { useSettingsStore } from '../stores/settings'
 import LoadingSpinner from '../components/LoadingSpinner.vue'
 
 interface Post {

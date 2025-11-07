@@ -30,7 +30,8 @@ export function useSEO(metaInfo: SEOMetaInfo = {}) {
 
   // 使用系统设置作为默认值
   const getDefaultMeta = (): SEOMetaInfo => ({
-    title: settingsStore.settings.site_title || 'CFBlog',
+    // 避免在设置未加载时回退到固定的 CFBlog，保持为空以避免闪烁
+    title: settingsStore.settings.site_title || '',
     description:
       settingsStore.settings.site_description ||
       '基于 Cloudflare Workers + D1 + R2 构建的现代化博客系统',
@@ -42,7 +43,12 @@ export function useSEO(metaInfo: SEOMetaInfo = {}) {
     twitterCard: 'summary_large_image',
   })
 
-  const meta = { ...getDefaultMeta(), ...metaInfo }
+  // 构建当前元信息（每次调用都使用最新设置）
+  const buildMeta = (extra: SEOMetaInfo = {}) => ({
+    ...getDefaultMeta(),
+    ...metaInfo,
+    ...extra,
+  })
 
   // 设置页面标题
   const setTitle = (title: string) => {
@@ -93,7 +99,7 @@ export function useSEO(metaInfo: SEOMetaInfo = {}) {
 
   // 更新所有 SEO meta 标签
   const updateMeta = (newMeta: SEOMetaInfo = {}) => {
-    const currentMeta = { ...meta, ...newMeta }
+    const currentMeta = buildMeta(newMeta)
 
     // 设置标题
     if (currentMeta.title) {
@@ -163,8 +169,21 @@ export function useSEO(metaInfo: SEOMetaInfo = {}) {
 
   // 组件挂载时更新 meta
   onMounted(() => {
-    updateMeta(metaInfo)
+    // 只有当调用方显式提供了标题，或设置已加载时才设置标题，避免初始 CFBlog 闪烁
+    if (metaInfo.title || settingsStore.isLoaded) {
+      updateMeta(metaInfo)
+    }
   })
+
+  // 设置加载完成后，如未显式传入标题，则用站点标题填充
+  watch(
+    () => settingsStore.isLoaded,
+    (loaded) => {
+      if (loaded && !metaInfo.title) {
+        updateMeta({})
+      }
+    }
+  )
 
   // 监听路由变化
   watch(

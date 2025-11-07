@@ -38,11 +38,6 @@ export const useSettingsStore = defineStore('settings', () => {
   }
 
   function updatePageInfo() {
-    // 更新页面标题
-    if (settings.value.site_title) {
-      document.title = settings.value.site_title
-    }
-
     // 更新 favicon
     if (settings.value.site_favicon) {
       updateFavicon(settings.value.site_favicon)
