@@ -32,27 +32,29 @@ const defaultLinkOpen =
   }
 
 md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
-  const hrefIndex = tokens[idx].attrIndex('href')
+  const token = tokens[idx]
+  if (!token) return defaultLinkOpen(tokens, idx, options, env, self)
+
+  const hrefIndex = token.attrIndex('href')
   if (hrefIndex >= 0) {
-    const href = (tokens[idx].attrs?.[hrefIndex]?.[1] || '').trim()
+    const href = (token.attrGet('href') || '').trim()
     const isExternal = /^https?:\/\//i.test(href)
     const isAnchor = href.startsWith('#')
 
     if (isExternal && !isAnchor) {
       // 如果未显式设置 target，则在新窗口打开
-      const targetIndex = tokens[idx].attrIndex('target')
+      const targetIndex = token.attrIndex('target')
       if (targetIndex < 0) {
-        tokens[idx].attrSet('target', '_blank')
+        token.attrSet('target', '_blank')
       }
 
       // 附加安全属性，避免重复
-      const relIndex = tokens[idx].attrIndex('rel')
-      let relVal = relIndex >= 0 ? tokens[idx].attrs?.[relIndex]?.[1] || '' : ''
-      const ensure = (val: string, token: string) =>
-        new RegExp(`(?:^|\\s)${token}(?:\\s|$)`, 'i').test(val) ? val : `${val} ${token}`.trim()
+      let relVal = token.attrGet('rel') || ''
+      const ensure = (val: string, req: string) =>
+        new RegExp(`(?:^|\\s)${req}(?:\\s|$)`, 'i').test(val) ? val : `${val} ${req}`.trim()
       relVal = ensure(relVal, 'noopener')
       relVal = ensure(relVal, 'noreferrer')
-      tokens[idx].attrSet('rel', relVal)
+      token.attrSet('rel', relVal)
     }
   }
 
