@@ -106,21 +106,11 @@ const tags = ref<Map<number, TagResponse>>(new Map())
 const loading = ref(false)
 const error = ref<string | null>(null)
 
-// 渲染Markdown内容
+// 渲染Markdown内容（始终按 Markdown 渲染）
 const renderedContent = computed(() => {
   if (!post.value?.content?.rendered) return ''
-
-  // 检查内容是否包含HTML标签，如果有则直接返回
   const content = post.value.content.rendered
-  const hasHtmlTags = /<[^>]+>/.test(content)
-
-  if (hasHtmlTags) {
-    // 内容已经是HTML，直接返回
-    return content
-  } else {
-    // 内容是Markdown，需要渲染
-    return renderMarkdown(content)
-  }
+  return renderMarkdown(content)
 })
 
 // SEO 管理

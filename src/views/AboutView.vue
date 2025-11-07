@@ -71,21 +71,11 @@ const page = ref<Page | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
 
-// 渲染Markdown内容
+// 渲染Markdown内容（始终按 Markdown 渲染）
 const renderedContent = computed(() => {
   if (!page.value?.content?.rendered) return ''
-
-  // 检查内容是否包含HTML标签，如果有则直接返回
   const content = page.value.content.rendered
-  const hasHtmlTags = /<[^>]+>/.test(content)
-
-  if (hasHtmlTags) {
-    // 内容已经是HTML，直接返回
-    return content
-  } else {
-    // 内容是Markdown，需要渲染
-    return renderMarkdown(content)
-  }
+  return renderMarkdown(content)
 })
 
 // SEO 优化
