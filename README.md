@@ -30,7 +30,7 @@
 
 后端项目地址：`cfBLOG` REST API（或兼容的 WordPress REST API）
 
-- https://github.com/jkjoy/cfclog
+- https://github.com/jkjoy/cfblog
 
 ---
 
