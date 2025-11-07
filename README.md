@@ -26,8 +26,6 @@
 
 **截图**
 
-> 以下为占位图，建议将实际页面截图放到 `public/screenshots/` 并替换为相对路径。
-
 ![首页示例](/screenshots/screenshots.webp)
 
 后端项目地址：`cfBLOG` REST API（或兼容的 WordPress REST API）
