@@ -12,8 +12,7 @@
 
 **在线预览**
 
-- Demo: https://your-site.example.com
-- 欢迎替换为你的实际部署地址。
+- Demo: https://akina.zxd.im
 
 **效果概览**
 
