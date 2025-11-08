@@ -29,7 +29,7 @@ const fetchCategory = async () => {
   try {
     // 使用 slug 查询分类
     const response = await fetch(`${API_BASE_URL}/wp-json/wp/v2/categories?slug=${categoryId.value}`)
-    if (!response.ok) {
+  if (!response.ok) {
       throw new Error('分类不存在')
     }
     const data = await response.json()
@@ -39,11 +39,14 @@ const fetchCategory = async () => {
 
       // SEO 优化
       if (category.value) {
-        updateMeta({
-          title: `${category.value.name} - ${settingsStore.settings.site_title}`,
-          description: category.value.description || `浏览 ${category.value.name} 分类下的所有文章`,
-          keywords: `${category.value.name}, 分类, 博客`,
-        })
+        // 仅在设置加载完成后才设置标题，避免默认值 CFBlog 闪烁
+        if (settingsStore.isLoaded) {
+          updateMeta({
+            title: `${category.value.name} - ${settingsStore.settings.site_title}`,
+            description: category.value.description || `浏览 ${category.value.name} 分类下的所有文章`,
+            keywords: `${category.value.name}, 分类, 博客`,
+          })
+        }
       }
     } else {
       throw new Error('分类不存在')
@@ -109,6 +112,20 @@ onMounted(async () => {
     fetchPosts(currentPage.value)
   }
 })
+
+// 当设置加载完成后，如果分类已获取，则用最新站点标题更新 SEO
+watch(
+  () => settingsStore.isLoaded,
+  (loaded) => {
+    if (loaded && category.value) {
+      updateMeta({
+        title: `${category.value.name} - ${settingsStore.settings.site_title}`,
+        description: category.value.description || `浏览 ${category.value.name} 分类下的所有文章`,
+        keywords: `${category.value.name}, 分类, 博客`,
+      })
+    }
+  }
+)
 </script>
 
 <template>

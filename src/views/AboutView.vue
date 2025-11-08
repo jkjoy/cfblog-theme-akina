@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useSEO } from '../composables/useSEO'
 import { useSettingsStore } from '../stores/settings'
 import { useMarkdown } from '../composables/useMarkdown'
@@ -78,11 +78,20 @@ const renderedContent = computed(() => {
   return renderMarkdown(content)
 })
 
-// SEO 优化
-const { updateMeta } = useSEO({
-  title: `关于 - ${settingsStore.settings.site_title}`,
-  type: 'website',
-})
+// SEO：等待设置加载后再设置基础标题，避免首屏默认值
+const { updateMeta } = useSEO()
+watch(
+  () => settingsStore.isLoaded,
+  (loaded) => {
+    if (loaded) {
+      updateMeta({
+        title: `关于 - ${settingsStore.settings.site_title}`,
+        type: 'website',
+      })
+    }
+  },
+  { immediate: true }
+)
 
 const getImageUrl = (mediaId: number): string => {
   return `${API_BASE_URL}/wp-json/wp/v2/media/${mediaId}`

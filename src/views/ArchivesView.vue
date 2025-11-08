@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useSEO } from '../composables/useSEO'
 import { useSettingsStore } from '../stores/settings'
 import LoadingSpinner from '../components/LoadingSpinner.vue'
@@ -82,11 +82,21 @@ const totalPosts = ref(0)
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787'
 
-// 设置 SEO
-const { updateMeta } = useSEO({
-  title: `文章归档 - ${settingsStore.settings.site_title}`,
-  description: `浏览所有文章归档，共 ${totalPosts.value} 篇文章`,
-})
+// SEO：设置加载完成后再设置标题，避免默认值闪烁
+const { updateMeta } = useSEO()
+watch(
+  () => settingsStore.isLoaded,
+  (loaded) => {
+    if (loaded) {
+      updateMeta({
+        title: `文章归档 - ${settingsStore.settings.site_title}`,
+        description: `浏览所有文章归档，共 ${totalPosts.value} 篇文章`,
+        type: 'website',
+      })
+    }
+  },
+  { immediate: true }
+)
 
 // 按年份分组的归档数据
 const archivesByYear = computed<YearData[]>(() => {

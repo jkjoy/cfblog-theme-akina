@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import PostCard from '../components/PostCard.vue'
 import SkeletonLoader from '../components/SkeletonLoader.vue'
 import Pagination from '../components/Pagination.vue'
@@ -10,14 +10,23 @@ import { useSettingsStore } from '../stores/settings'
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787'
 const settingsStore = useSettingsStore()
 
-// SEO 优化 - 使用系统设置
-useSEO({
-  title: `${settingsStore.settings.site_title} - 首页`,
-  description:
-    settingsStore.settings.site_description ||
-    '探索最新的博客文章和技术分享，涵盖编程、技术、设计等多个领域',
-  type: 'website',
-})
+// SEO：等待设置加载后再设置标题，避免首屏显示默认 CFBlog
+const { updateMeta } = useSEO()
+watch(
+  () => settingsStore.isLoaded,
+  (loaded) => {
+    if (loaded) {
+      updateMeta({
+        title: `${settingsStore.settings.site_title} - 首页`,
+        description:
+          settingsStore.settings.site_description ||
+          '探索最新的博客文章和技术分享，涵盖编程、技术、设计等多个领域',
+        type: 'website',
+      })
+    }
+  },
+  { immediate: true }
+)
 
 const posts = ref<PostResponse[]>([])
 const loading = ref(false)

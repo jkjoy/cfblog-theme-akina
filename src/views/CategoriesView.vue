@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSEO } from '../composables/useSEO'
 import { useSettingsStore } from '../stores/settings'
@@ -59,11 +59,21 @@ const categories = ref<CategoryResponse[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
 
-// 设置 SEO
-const { updateMeta } = useSEO({
-  title: `文章分类 - ${settingsStore.settings.site_title}`,
-  description: '浏览所有文章分类',
-})
+// SEO：等待设置加载完成后再设置标题
+const { updateMeta } = useSEO()
+watch(
+  () => settingsStore.isLoaded,
+  (loaded) => {
+    if (loaded) {
+      updateMeta({
+        title: `文章分类 - ${settingsStore.settings.site_title}`,
+        description: '浏览所有文章分类',
+        type: 'website',
+      })
+    }
+  },
+  { immediate: true }
+)
 
 const fetchCategories = async () => {
   loading.value = true

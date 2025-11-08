@@ -63,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useSEO } from '../composables/useSEO'
 import { useSettingsStore } from '../stores/settings'
 
@@ -98,12 +98,21 @@ interface LinkCategory {
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787'
 const settingsStore = useSettingsStore()
 
-// SEO 优化
-useSEO({
-  title: `友情链接 - ${settingsStore.settings.site_title}`,
-  description: '欢迎交换友链，一起成长！',
-  type: 'website',
-})
+// SEO：等待设置加载完成后再设置标题
+const { updateMeta } = useSEO()
+watch(
+  () => settingsStore.isLoaded,
+  (loaded) => {
+    if (loaded) {
+      updateMeta({
+        title: `友情链接 - ${settingsStore.settings.site_title}`,
+        description: '欢迎交换友链，一起成长！',
+        type: 'website',
+      })
+    }
+  },
+  { immediate: true }
+)
 
 const links = ref<Link[]>([])
 const linkCategories = ref<LinkCategory[]>([])

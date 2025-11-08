@@ -39,11 +39,14 @@ const fetchTag = async () => {
 
       // SEO 优化
       if (tag.value) {
-        updateMeta({
-          title: `${tag.value.name} - ${settingsStore.settings.site_title}`,
-          description: tag.value.description || `浏览 ${tag.value.name} 标签下的所有文章`,
-          keywords: `${tag.value.name}, 标签, 博客`,
-        })
+        // 仅在设置加载完成后才设置标题，避免默认值 CFBlog 闪烁
+        if (settingsStore.isLoaded) {
+          updateMeta({
+            title: `${tag.value.name} - ${settingsStore.settings.site_title}`,
+            description: tag.value.description || `浏览 ${tag.value.name} 标签下的所有文章`,
+            keywords: `${tag.value.name}, 标签, 博客`,
+          })
+        }
       }
     } else {
       throw new Error('标签不存在')
@@ -109,6 +112,20 @@ onMounted(async () => {
     fetchPosts(currentPage.value)
   }
 })
+
+// 设置加载完成后，如已获取标签，用最新站点标题更新 SEO
+watch(
+  () => settingsStore.isLoaded,
+  (loaded) => {
+    if (loaded && tag.value) {
+      updateMeta({
+        title: `${tag.value.name} - ${settingsStore.settings.site_title}`,
+        description: tag.value.description || `浏览 ${tag.value.name} 标签下的所有文章`,
+        keywords: `${tag.value.name}, 标签, 博客`,
+      })
+    }
+  }
+)
 </script>
 
 <template>

@@ -131,16 +131,18 @@ watch(post, (newPost) => {
 
     const description = stripHtml(newPost.excerpt.rendered).substring(0, 160)
 
-    // 更新 meta 标签
-    updateMeta({
-      title: `${newPost.title.rendered} - ${settingsStore.settings.site_title}`,
-      description,
-      type: 'article',
-      url: newPost.link,
-      publishedTime: newPost.date,
-      modifiedTime: newPost.modified,
-      image: newPost.featured_media ? `${API_BASE_URL}/wp-json/wp/v2/media/${newPost.featured_media}` : undefined,
-    })
+    // 更新 meta 标签（仅在设置加载完成后设置标题，避免默认值闪烁）
+    if (settingsStore.isLoaded) {
+      updateMeta({
+        title: `${newPost.title.rendered} - ${settingsStore.settings.site_title}`,
+        description,
+        type: 'article',
+        url: newPost.link,
+        publishedTime: newPost.date,
+        modifiedTime: newPost.modified,
+        image: newPost.featured_media ? `${API_BASE_URL}/wp-json/wp/v2/media/${newPost.featured_media}` : undefined,
+      })
+    }
 
     // 添加结构化数据
     setArticleStructuredData({
@@ -156,6 +158,30 @@ watch(post, (newPost) => {
     })
   }
 })
+
+// 设置加载完成后，如已获取文章，用最新站点标题更新 SEO
+watch(
+  () => settingsStore.isLoaded,
+  (loaded) => {
+    if (loaded && post.value) {
+      const stripHtml = (html: string) => {
+        const tmp = document.createElement('DIV')
+        tmp.innerHTML = html
+        return tmp.textContent || tmp.innerText || ''
+      }
+      const description = stripHtml(post.value.excerpt.rendered).substring(0, 160)
+      updateMeta({
+        title: `${post.value.title.rendered} - ${settingsStore.settings.site_title}`,
+        description,
+        type: 'article',
+        url: post.value.link,
+        publishedTime: post.value.date,
+        modifiedTime: post.value.modified,
+        image: post.value.featured_media ? `${API_BASE_URL}/wp-json/wp/v2/media/${post.value.featured_media}` : undefined,
+      })
+    }
+  }
+)
 
 const fetchPost = async () => {
   loading.value = true
