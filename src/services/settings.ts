@@ -119,7 +119,9 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       if (response.ok) {
         additionalSettings = await response.json()
       } else {
-        console.warn('Failed to fetch additional settings from /wp-json/wp/v2/settings, using defaults')
+        console.warn(
+          'Failed to fetch additional settings from /wp-json/wp/v2/settings, using defaults',
+        )
       }
     } catch (error) {
       console.warn('Error fetching additional settings, using defaults:', error)
@@ -192,13 +194,12 @@ function getDefaultSettings(
 ): SiteSettings {
   return {
     site_title: siteName || 'CFBlog',
-    site_description:
-      siteDescription || '基于 Cloudflare Workers + D1 + R2 构建的现代化博客系统',
+    site_description: siteDescription || '基于 Cloudflare Workers + D1 + R2 构建的现代化博客系统',
     site_keywords: 'blog, cloudflare, workers, vue3, typescript',
     site_author: siteAuthor || 'CFBlog',
     site_favicon: '',
     site_logo: '',
     site_icp: '',
-    site_footer_text: '© 2024 CFBlog. Powered by Cloudflare Workers.',
+    site_footer_text: '© 2025 CFBlog. Powered by Cloudflare Workers.',
   }
 }

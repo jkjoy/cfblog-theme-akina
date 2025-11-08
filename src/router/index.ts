@@ -35,7 +35,7 @@ const router = createRouter({
       component: () => import('../views/TagDetailView.vue'),
     },
     {
-      path: '/link',
+      path: '/links',
       name: 'links',
       component: () => import('../views/LinksView.vue'),
     },

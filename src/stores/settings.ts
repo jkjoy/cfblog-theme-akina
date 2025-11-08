@@ -12,7 +12,7 @@ export const useSettingsStore = defineStore('settings', () => {
     site_favicon: '',
     site_logo: '',
     site_icp: '',
-    site_footer_text: '© 2024 CFBlog. Powered by Cloudflare Workers.',
+    site_footer_text: '© 2025 CFBlog. Powered by Cloudflare Workers.',
   })
 
   const isLoaded = ref(false)

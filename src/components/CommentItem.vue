@@ -1,15 +1,17 @@
 <template>
   <li
     class="comment"
-    :class="[
-      depth % 2 === 1 ? 'comment-odd' : 'comment-even',
-      `depth-${depth + 1}`
-    ]"
+    :class="[depth % 2 === 1 ? 'comment-odd' : 'comment-even', `depth-${depth + 1}`]"
     :id="`li-comment-${comment.id}`"
   >
     <div :id="`comment-${comment.id}`" class="comment_body contents">
       <div class="profile">
-        <a :href="comment.author_url || '#'" :title="comment.author_name">
+        <a
+          :href="comment.author_url || '#'"
+          :title="comment.author_name"
+          target="_blank"
+          rel="external nofollow noopener noreferrer"
+        >
           <img
             :src="getAvatarUrl()"
             :alt="comment.author_name"
@@ -24,7 +26,11 @@
       <section class="commeta">
         <div class="left">
           <h4 class="author">
-            <a :href="comment.author_url || '#'">
+            <a
+              :href="comment.author_url || '#'"
+              target="_blank"
+              rel="external nofollow noopener noreferrer"
+            >
               <img
                 :src="getAvatarUrl()"
                 :alt="comment.author_name"
@@ -60,6 +66,7 @@
             href="#"
             rel="nofollow"
             class="cute atreply"
+            target="_blank"
           >
             @{{ parentAuthorName }}
           </a>
@@ -116,7 +123,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   depth: 0,
-  parentAuthorName: ''
+  parentAuthorName: '',
 })
 
 defineEmits<{
@@ -129,10 +136,12 @@ const avatarError = ref(false)
 const getAvatarUrl = (): string => {
   // 使用API返回的author_avatar_urls，优先使用96px的尺寸
   if (props.comment.author_avatar_urls) {
-    return props.comment.author_avatar_urls[96] ||
-           props.comment.author_avatar_urls[48] ||
-           props.comment.author_avatar_urls[24] ||
-           generatePlaceholder()
+    return (
+      props.comment.author_avatar_urls[96] ||
+      props.comment.author_avatar_urls[48] ||
+      props.comment.author_avatar_urls[24] ||
+      generatePlaceholder()
+    )
   }
   return generatePlaceholder()
 }
@@ -160,8 +169,16 @@ const handleAvatarError = (e: Event) => {
 const generatePlaceholder = (): string => {
   const initial = props.comment.author_name.charAt(0).toUpperCase()
   const colors = [
-    '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
-    '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B500', '#76D7C4'
+    '#FF6B6B',
+    '#4ECDC4',
+    '#45B7D1',
+    '#FFA07A',
+    '#98D8C8',
+    '#F7DC6F',
+    '#BB8FCE',
+    '#85C1E2',
+    '#F8B500',
+    '#76D7C4',
   ]
   const colorIndex = props.comment.author_name.charCodeAt(0) % colors.length
   const bgColor = colors[colorIndex]
@@ -277,7 +294,7 @@ const formatDate = (dateString: string): string => {
 }
 
 .comment h4 a:hover {
-  color: var(--primary-color, #ADDAC9);
+  color: var(--primary-color, #addac9);
 }
 
 .comment .comment-reply-link {
@@ -333,7 +350,7 @@ const formatDate = (dateString: string): string => {
 
 /* @ 提及样式 */
 a.cute.atreply {
-  color: #4DA05F;
+  color: #4da05f;
   text-decoration: none;
 }
 

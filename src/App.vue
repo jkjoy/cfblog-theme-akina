@@ -30,7 +30,7 @@ watch(
   (newPath) => {
     console.log('🔀 App.vue - Route changed to:', newPath)
     closeMobileMenu()
-  }
+  },
 )
 </script>
 
@@ -50,7 +50,7 @@ watch(
           <RouterLink to="/categories" class="nav-link">分类</RouterLink>
           <RouterLink to="/archives" class="nav-link">归档</RouterLink>
           <RouterLink to="/tags" class="nav-link">标签</RouterLink>
-          <RouterLink to="/link" class="nav-link">友链</RouterLink>
+          <RouterLink to="/links" class="nav-link">友链</RouterLink>
           <RouterLink to="/about" class="nav-link">关于</RouterLink>
           <RouterLink to="/search" class="nav-link search-icon" title="搜索">
             <svg
@@ -121,7 +121,7 @@ watch(
           <RouterLink to="/tags" class="mobile-nav-link">
             <span>标签</span>
           </RouterLink>
-          <RouterLink to="/link" class="mobile-nav-link">
+          <RouterLink to="/links" class="mobile-nav-link">
             <span>友链</span>
           </RouterLink>
           <RouterLink to="/about" class="mobile-nav-link">
@@ -142,7 +142,9 @@ watch(
       <div class="footer-container">
         <p v-html="settingsStore.settings.site_footer_text"></p>
         <p v-if="settingsStore.settings.site_icp" class="icp">
-          {{ settingsStore.settings.site_icp }}
+          <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">
+            {{ settingsStore.settings.site_icp }}
+          </a>
         </p>
       </div>
     </footer>
